@@ -1,5 +1,14 @@
 <script setup>
 import Versions from './components/Versions.vue'
+
+const myfunc = () => {
+    window.electronAPI.serverArgh('hello from client to server')
+    window.electronAPI.logServerText((text) => {
+        clientArgh(arg)
+    })
+}
+
+
 </script>
 
 <template>
@@ -8,7 +17,7 @@ import Versions from './components/Versions.vue'
   <svg class="hero-logo" viewBox="0 0 900 300">
     <use xlink:href="./assets/icons.svg#electron" />
   </svg>
-  <h2 class="hero-text">You've successfully created an Electron project with Vue</h2>
+  <h2 class="hero-text" @click="myfunc">You've successfully created an Electron project with Vue</h2>
   <p class="hero-tagline">Please try pressing <code>F12</code> to open the devTool</p>
 
   <div class="links">

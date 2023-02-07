@@ -13,3 +13,13 @@ function say_hello_js(_from) {
 eel.expose(say_hello_js)
 say_hello_js("Javascript world!")
 eel.say_hello_py("Javascript calling to Python!")
+
+export const clientArgh = (arg) => {
+    console.log('electron client process says: ' + arg)
+    return 'logged from client'
+}
+
+window.api.serverArgh('hello from client to server')
+window.api.logServerText((event, text) => {
+    clientArgh(text)
+})

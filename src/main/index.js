@@ -1,11 +1,20 @@
-import { app, shell, BrowserWindow } from 'electron'
+import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
+
+
+export const serverArgh = (targetWindow, arg) => {
+    dialog.showMessageBox(targetWindow, { message: 'electron main process says: ' + arg })
+    return 'logged from server'
+}
+
+let mainWindow
+
 function createWindow() {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
     show: false,
@@ -16,6 +25,7 @@ function createWindow() {
       sandbox: false
     }
   })
+  ipcMain.on('arg-from-client', (event, arg) => { serverArgh(mainWindow, arg) })
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
@@ -34,6 +44,8 @@ function createWindow() {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
   mainWindow.webContents.openDevTools()
+  mainWindow.webContents.on('did-finish-load', () => mainWindow.webContents.send('argh-to-client', 'hello from server to client')
+  )
 
 }
 
@@ -56,7 +68,10 @@ app.whenReady().then(() => {
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    if (BrowserWindow.getAllWindows().length === 0) { createWindow() }
+    setTimeout( () => {
+        mainWindow.webContents.send('argh-to-client', 'hello from server to client')
+    }, 1000)
   })
 })
 
